@@ -1,0 +1,16 @@
+# action.yml
+name: 'Fetch Github repo names'
+description: 'Fetch all repo name in the org account'
+inputs:
+  last_active:
+    description: 'Number of day that last commit was made'
+    required: true
+    default: '1'
+outputs:
+  repos:
+    description: 'A list of repo names'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.last_active }}

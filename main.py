@@ -1,5 +1,7 @@
 import os
-from datetime import datetime
+import argparse
+from datetime import datetime, timedelta
+from functools import partial
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 
@@ -55,15 +57,23 @@ def generate_query(cursor=None):
         '''
     )
 
-def repo_filter(repo):
-    if repo.template != "bo-sfl/personal-template":#"SFLScientific/SFL-Template":
+def repo_filters(repo, template_name, last_n_day):
+    if repo.template != template_name:
         return False
-    # if repo.last_updated < datetime.today() - datetime.timedelta(days=280):
-    #     return False
+    if repo.last_updated < datetime.today() - timedelta(days=last_n_day):
+        return False
     return True
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Process inputs.')
+    parser.add_argument('--last_active', type=int, default=1)
+    parser.add_argument(
+        '--template_name', 
+        type=str, 
+        default="SFLScientific/SFL-Template")
+    args = parser.parse_args()
+
     client = create_client()
     current_cursor = None
     results = []
@@ -77,9 +87,16 @@ def main():
             break
         else:
             current_cursor = result[-1]['cursor']
-
+    
+    repo_filter = partial(
+        repo_filters, 
+        template_name="bo-sfl/personal-template", 
+        last_n_day=args.last_active,
+        )
     return [x.name for x in filter(repo_filter, results)]
 
 
 if __name__ == "__main__":
+    # x = main()
+    # print(x)
     main()
