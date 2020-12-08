@@ -1,3 +1,4 @@
+import json 
 import argparse
 from datetime import datetime, timedelta
 from functools import partial
@@ -98,9 +99,7 @@ def main():
         last_n_day=args.last_active,
         )
     x =  [x.name for x in filter(repo_filter, results)]
-    ww = " ".join(x) 
-    print(ww)
-    return  ww
+    return  json.dumps({"repo":_ for _ in x})
 
 
 if __name__ == "__main__":
