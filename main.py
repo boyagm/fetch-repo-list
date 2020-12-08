@@ -19,7 +19,7 @@ class Repo(object):
 
 def create_client():
     headers = {
-        "Authorization": f"token {os.getenv('GITHUB_TOKEN')}", 
+        "Authorization": f"token {os.getenv('ORG_DISTRIBUTE_TOKEN')}", 
     }
     # Select your transport with a defined url endpoint
     transport = AIOHTTPTransport(url="https://api.github.com/graphql", headers=headers)
