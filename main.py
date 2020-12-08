@@ -93,10 +93,11 @@ def main():
         template_name="bo-sfl/personal-template", 
         last_n_day=args.last_active,
         )
-    return [x.name for x in filter(repo_filter, results)]
+    x =  [x.name for x in filter(repo_filter, results)]
+    ww = " ".join(x) 
+    print(ww)
+    return  ww
 
 
 if __name__ == "__main__":
-    # x = main()
-    # print(x)
     main()

@@ -1,5 +1,6 @@
 #!/bin/sh -l
 
-echo "Hello $1"
-time=$(python --last $1)
+echo $1
+echo $2
+time=$(python main.py --last_active $1 --template_name $2)
 echo "::set-output name=time::$time"
