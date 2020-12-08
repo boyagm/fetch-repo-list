@@ -1,1 +1,0 @@
-['bo-sfl/my-test-project', 'bo-sfl/my-new-test']

@@ -99,7 +99,7 @@ def main():
         last_n_day=args.last_active,
         )
     x =  [x.name for x in filter(repo_filter, results)]
-    print(f'{{\"repo\":{x}}}')
+    print(f'{{\\"repo\\":{x}}}')
     return
 
 
