@@ -4,4 +4,4 @@ RUN pip install --pre gql[all] --no-cache
 
 WORKDIR /src
 
-ENTRYPOINT ["/bin/bash"]
+ENTRYPOINT ["/entrypoint.sh"]
