@@ -90,7 +90,7 @@ def main():
     
     repo_filter = partial(
         repo_filters, 
-        template_name="bo-sfl/personal-template", 
+        template_name=args.template_name, 
         last_n_day=args.last_active,
         )
     x =  [x.name for x in filter(repo_filter, results)]
