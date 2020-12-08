@@ -67,7 +67,7 @@ def repo_filters(repo, template_name, last_n_day):
 
 def main():
     parser = argparse.ArgumentParser(description='Process inputs.')
-    parser.add_argument('--last_active', type=int, default=1)
+    parser.add_argument('--last_active', type=int, default=28)
     parser.add_argument(
         '--template_name', 
         type=str, 
@@ -99,7 +99,7 @@ def main():
         last_n_day=args.last_active,
         )
     x =  [x.name for x in filter(repo_filter, results)]
-    return  json.dumps({"repo":_ for _ in x})
+    return f'{{\"repo\":{x}}}'
 
 
 if __name__ == "__main__":
