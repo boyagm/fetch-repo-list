@@ -1,4 +1,3 @@
-import os
 import argparse
 from datetime import datetime, timedelta
 from functools import partial
@@ -17,9 +16,9 @@ class Repo(object):
             self.template = None
 
 
-def create_client():
+def create_client(token):
     headers = {
-        "Authorization": f"token {os.getenv('ORG_DISTRIBUTE_TOKEN')}", 
+        "Authorization": f"token {token}", 
     }
     # Select your transport with a defined url endpoint
     transport = AIOHTTPTransport(url="https://api.github.com/graphql", headers=headers)
@@ -72,9 +71,14 @@ def main():
         '--template_name', 
         type=str, 
         default="SFLScientific/SFL-Template")
+    parser.add_argument(
+        '--token', 
+        type=str, 
+        required=True)
+
     args = parser.parse_args()
 
-    client = create_client()
+    client = create_client(args.token)
     current_cursor = None
     results = []
     while True:

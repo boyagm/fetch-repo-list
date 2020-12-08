@@ -10,6 +10,10 @@ inputs:
     description: 'Name of the template repo'
     required: true
     default: 'SFLScientific/SFL-Template'
+  token:
+    description: 'Github token'
+    required: true
+    default: ''
 outputs:
   repos:
     description: 'A list of repo names'
@@ -19,3 +23,4 @@ runs:
   args:
     - ${{ inputs.last_active }}
     - ${{ inputs.template }}
+    - ${{ inputs.token }}
