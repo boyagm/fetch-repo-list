@@ -102,7 +102,7 @@ def main():
         )
 
     x =  [x.name for x in filter(repo_filter, results)]
-    with open("repos.txt", "r") as f:
+    with open("repos.txt", "w") as f:
         f.writeline(f'{{\\"repo\\":{x}}}')
     #print(f'{{\\"repo\\":{x}}}') # Passing the results
     return # f'{{\\"repo\\":{x}}}'
