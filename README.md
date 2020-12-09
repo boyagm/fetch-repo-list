@@ -5,7 +5,7 @@ Usage example:
 ```
     - name: Find all workable repo
       id: repo_list
-      uses: bo-sfl/fetch-repo-list@0.3
+      uses: SFLScientific/fetch-repo-list@1.0.1
       with:
         last_active: [N_DAYS]
         template: [TEMLATE_NAME]
