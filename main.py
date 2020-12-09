@@ -102,8 +102,10 @@ def main():
         )
 
     x =  [x.name for x in filter(repo_filter, results)]
-    print(f'{{\\"repo\\":{x}}}') # Passing the results
-    return
+    with open("repos.txt", "r") as f:
+        f.writeline(f'{{\\"repo\\":{x}}}')
+    #print(f'{{\\"repo\\":{x}}}') # Passing the results
+    return # f'{{\\"repo\\":{x}}}'
 
 
 if __name__ == "__main__":
