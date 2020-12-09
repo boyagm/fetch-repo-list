@@ -18,6 +18,7 @@ class Repo(object):
 
 
 def create_client(token):
+    """Create a Graph DB query client"""
     headers = {
         "Authorization": f"token {token}", 
     }
@@ -30,7 +31,7 @@ def create_client(token):
 
 
 def generate_query(cursor=None):
-    """Construct graph api query"""
+    """Construct a Github graph api query"""
     if cursor:
         after = f' after: "{cursor}"'
     else:
@@ -58,6 +59,7 @@ def generate_query(cursor=None):
     )
 
 def repo_filters(repo, template_name, last_n_day):
+    """Filter a repo based on given criteria """
     if repo.template != template_name:
         return False
     if repo.last_updated < datetime.today() - timedelta(days=last_n_day):
@@ -83,10 +85,10 @@ def main():
     current_cursor = None
     results = []
     while True:
-        # Provide a GraphQL query
+        # Construct a GraphQL query
         query = generate_query(current_cursor)
-        result = client.execute(query)['viewer']['repositories']['edges']
         # Execute the query on the transport
+        result = client.execute(query)['viewer']['repositories']['edges']
         results.extend([Repo(x['node']) for x in result])
         if len(result) < 100:
             break
@@ -98,8 +100,9 @@ def main():
         template_name=args.template_name, 
         last_n_day=args.last_active,
         )
+
     x =  [x.name for x in filter(repo_filter, results)]
-    print(f'{{\\"repo\\":{x}}}')
+    print(f'{{\\"repo\\":{x}}}') # Passing the results
     return
 
 

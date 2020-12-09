@@ -5,13 +5,13 @@ Usage example:
 ```
     - name: Find all workable repo
       id: repo_list
-      uses: bo-sfl/fetch-repo-list@0.3
+      uses: SFLScientific/fetch-repo-list
       with:
         last_active: [N_DAYS]
-        template: [TEMLATE_NAME]
+        template: [TEMPLATE_NAME]
         token: [READ_ACCESS_TOKEN]
 ```
 
 - `N_DAYS` is a time filter to only select repos that are activate in last N days.
-- `TEMLATE_NAME` is the name of the template repo to filter on, for example `bo-sfl/personal-template`. 
+- `TEMPLATE_NAME` is the name of the template repo to filter on, for example `bo-sfl/personal-template`. 
 - `READ_ACCESS_TOKEN` it the Github token to read repo information.
