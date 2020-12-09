@@ -101,11 +101,9 @@ def main():
         last_n_day=args.last_active,
         )
 
-    x =  [x.name for x in filter(repo_filter, results)]
+    repo_list =  [x.name for x in filter(repo_filter, results)]
     with open("repos.txt", "w") as f:
-        f.write(f'{{\\"repo\\":{x}}}')
-    #print(f'{{\\"repo\\":{x}}}') # Passing the results
-    return # f'{{\\"repo\\":{x}}}'
+        f.write(f'{{\\"repo\\":{repo_list}}}')
 
 
 if __name__ == "__main__":
