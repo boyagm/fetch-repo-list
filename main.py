@@ -30,50 +30,92 @@ def create_client(token):
     return client
 
 
-def generate_query(cursor=None):
-    """Construct a Github graph api query"""
-    if cursor:
-        after = f' after: "{cursor}"'
-    else:
-        after = ""
-
-    return gql(
-        f'''
-        {{
-            viewer {{
-                repositories(first: 100{after}) {{
-                    edges {{
-                        cursor
-                        node {{
-                            nameWithOwner
-                            pushedAt
-                            templateRepository {{
-                                nameWithOwner
-                            }}
-                        }}
+def generate_query(cursor, org=None):
+    """
+    Construct a Github GraphQL API query
+    """
+    if org:
+    
+        return gql(f'''
+            {{
+                viewer {{
+                    organization(login: {org}) {{
+                        {generate_repo_query(cursor)}
                     }}
                 }}
             }}
+            '''
+        )
+    else:
+        return gql(f'''
+        {{
+            viewer {{
+                {generate_repo_query(cursor)}
+                }}
         }}
         '''
-    )
+        )
 
-def repo_filters(repo, template_name, last_n_day):
-    """Filter a repo based on given criteria """
-    if repo.template != template_name:
-        return False
+
+def generate_repo_query(cursor):
+    """
+    Construct a sub-query to fetch all information
+    """
+    return f'''
+    repositories(first: 100 {next_cursor(cursor)}) {{
+        edges {{
+            cursor
+            node {{
+                nameWithOwner
+                pushedAt
+                templateRepository {{
+                    nameWithOwner
+                }}
+            }}
+        }}
+    }}
+    '''
+
+def next_cursor(cursor):
+    '''Get after string for query'''
+    if cursor:
+        return f'after: "{cursor}"'
+    else:
+        return ""
+
+
+def time_filters(repo, last_n_day):
+    """Return True if the repo is active in last N days"""
     if repo.last_updated < datetime.today() - timedelta(days=last_n_day):
         return False
     return True
 
 
+def template_filters(repo, template_name):
+    """Return True if the repo is created using the template"""
+    if repo.template != template_name:
+        return False
+    return True
+
+
+def parse_results(result_json, org=None):
+    if org:
+        results = result_json['viewer']['organization']['repositories']['edges']
+    else:
+        results = result_json['viewer']['repositories']['edges']
+    
+    repo_list = [Repo(x['node']) for x in results]
+    last_cursor = results[-1]['cursor']
+    return repo_list, last_cursor
+
 def main():
     parser = argparse.ArgumentParser(description='Process inputs.')
-    parser.add_argument('--last_active', type=int, default=28)
+    parser.add_argument('--last_active', type=int, default=None)
+    parser.add_argument('--org_name', type=str, default=None)
     parser.add_argument(
         '--template_name', 
         type=str, 
-        default="SFLScientific/SFL-Template")
+        default=None)
     parser.add_argument(
         '--token', 
         type=str, 
@@ -83,26 +125,31 @@ def main():
 
     client = create_client(args.token)
     current_cursor = None
-    results = []
+    repo_list = []
     while True:
         # Construct a GraphQL query
-        query = generate_query(current_cursor)
+        query = generate_query(current_cursor, args.org_name)
         # Execute the query on the transport
-        result = client.execute(query)['viewer']['repositories']['edges']
-        results.extend([Repo(x['node']) for x in result])
-        if len(result) < 100:
+        result_json = client.execute(query)
+        repos, current_cursor= parse_results(result_json, args.org_name)
+        repo_list.extend(repos)
+        if len(repos) < 100:
             break
-        else:
-            current_cursor = result[-1]['cursor']
-    
-    repo_filter = partial(
-        repo_filters, 
-        template_name=args.template_name, 
-        last_n_day=args.last_active,
-        )
 
-    x =  [x.name for x in filter(repo_filter, results)]
-    print(f'{{\\"repo\\":{x}}}') # Passing the results
+    if args.last_active:
+        repo_filter = partial(time_filters, last_n_day=args.last_active)
+        repo_list = filter(repo_filter, repo_list)
+    
+    if args.template_name:
+        repo_filter = partial(template_filters, template_name=args.template_name)
+        repo_list = filter(repo_filter, repo_list)
+
+    repo_names =  [x.name for x in repo_list]
+    for x in repo_list:
+        print(x.name, x.template, x.last_updated)
+
+    with open("repos.txt", "w") as f:
+        f.write(f'{{\\"repo\\":{repo_names}}}')
     return
 
 
