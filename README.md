@@ -19,3 +19,5 @@ Optional:
 - `ORG_NAME`: Name of the organization. If a value is given, the action will return repos owned by the Org.
 - `N_DAYS`: If a value is given, the action will return repos were active in last N days. The condition is ignored by default.
 - `TEMPLATE_NAME`: The name of the template repo. If a value is given, the action will return repos created from the template. For example `bo-sfl/personal-template`. The condition is ignored by default.
+
+The final output it passed to the `steps.[STEP_ID].outputs.repo_list`, in the above example, the `STEP_ID` is `get_repo_list`
