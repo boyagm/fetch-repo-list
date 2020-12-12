@@ -2,17 +2,21 @@
 name: 'Fetch Github repo names'
 description: 'Fetch all repo name in the org account'
 inputs:
-  last_active:
-    description: 'Number of day that last commit was made'
-    required: true
-    default: 28
-  template:
-    description: 'Name of the template repo'
-    required: true
-    default: 'SFLScientific/SFL-Template'
   token:
     description: 'Github token'
     required: true
+    default: ''
+  last_active:
+    description: 'Number of day that last commit was made'
+    required: false
+    default: 28
+  template:
+    description: 'Name of the template repo'
+    required: false
+    default: ''
+  org_name:
+    description: 'Name of the organization'
+    required: false
     default: ''
 outputs:
   repos:
@@ -21,6 +25,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
+    - ${{ inputs.token }}
     - ${{ inputs.last_active }}
     - ${{ inputs.template }}
-    - ${{ inputs.token }}
+    - ${{ inputs.org_name }}
